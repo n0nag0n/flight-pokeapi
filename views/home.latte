@@ -1,0 +1,8 @@
+<p>Welcome to the Pokemon World!</p>
+
+<p>Types of Pokemon</p>
+<ul>
+	{foreach $types as $type}
+		<li><a href="/pokemon/type/{$type->name}">{$type->name|firstUpper}</a></li>
+	{/foreach}
+</ul>

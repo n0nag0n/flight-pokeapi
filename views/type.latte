@@ -1,0 +1,6 @@
+<h1>{$type|firstUpper}</h1>
+<ul>
+	{foreach $pokemons as $pokemon}
+		<li><a href="/pokemon/{$pokemon->id}">{$pokemon->name|firstUpper}</a></li>
+	{/foreach}
+</ul>

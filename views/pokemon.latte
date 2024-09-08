@@ -1,0 +1,12 @@
+<h1>{$pokemon->name|firstUpper}</h1>
+<p><img src="{$pokemon->sprites->front_default}" alt="{$pokemon->name|firstUpper}"></p>
+<p>Type(s): </p>
+<ul>
+	{foreach $pokemon->types as $type}
+		<li><a href="/pokemon/type/{$type->type->name}">{$type->type->name|firstUpper}</a></li>
+	{/foreach}
+</ul>
+<p>Height: {$pokemon->height} decimeters</p>
+<p>Weight: {$pokemon->weight} hectograms</p>
+<p>Abilities: {foreach $pokemon->abilities as $ability}{$ability->ability->name|firstUpper}{if !$iterator->last}, {/if}{/foreach}</p>
+<p>Base experience: {$pokemon->base_experience}</p>

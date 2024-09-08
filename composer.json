@@ -1,0 +1,7 @@
+{
+    "require": {
+        "flightphp/core": "^3.12",
+        "stefangabos/zebra_curl": "^1.6",
+        "latte/latte": "^2.11"
+    }
+}
