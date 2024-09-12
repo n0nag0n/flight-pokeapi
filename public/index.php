@@ -17,7 +17,9 @@ Flight::map('render', function(string $template_path, array $data = []) use ($La
 
 $Curl = new Zebra_cURL();
 $Curl->cache(__DIR__ . '/../temp');
-Flight::set('Curl', $Curl);
+Flight::map('curl', function() use ($Curl) { 
+	return $Curl; 
+});
 
 Flight::route('/', function() {
   echo 'hello world!';
@@ -25,24 +27,26 @@ Flight::route('/', function() {
 
 Flight::group('/pokemon', function(Router $router) {
 	$router->get('/', function() {
-		$types_response = json_decode(Flight::get('Curl')->scrap('https://pokeapi.co/api/v2/type/', true));
+		$types_response = json_decode(Flight::curl()->scrap('https://pokeapi.co/api/v2/type/', true));
 		$results = [];
 		while($types_response->next) {
 		$results = array_merge($results, $types_response->results);
-		$types_response = json_decode(Flight::get('Curl')->scrap($types_response->next, true));
+		$types_response = json_decode(Flight::curl()->scrap($types_response->next, true));
 		}
 		$results = array_merge($results, $types_response->results);
 		Flight::render('home.latte', [ 'types' => $results ]);
 	});
 
 	$router->get('/type/@type', function(string $type) {
-		$Curl = Flight::get('Curl');
+		$Curl = Flight::curl();
 		$type_response = json_decode($Curl->scrap('https://pokeapi.co/api/v2/type/' . $type, true));
 		$pokemon_urls = [];
 		foreach($type_response->pokemon as $pokemon_data) {
 			$pokemon_urls[] = $pokemon_data->pokemon->url;
 		}
 		$pokemon_data = [];
+		// The little & here is important to pass the variable by reference.
+		// In other words it allows us to modify the variable inside the closure.
 		$Curl->get($pokemon_urls, function(stdClass $result) use (&$pokemon_data) {
 			$pokemon_data[] = json_decode($result->body);
 		});
@@ -54,7 +58,7 @@ Flight::group('/pokemon', function(Router $router) {
 	});
 
 	$router->get('/@id', function(int $id) {
-		$pokemon_data = json_decode(Flight::get('Curl')->scrap('https://pokeapi.co/api/v2/pokemon/' . $id, true));
+		$pokemon_data = json_decode(Flight::curl()->scrap('https://pokeapi.co/api/v2/pokemon/' . $id, true));
 		Flight::render('pokemon.latte', [ 'pokemon' => $pokemon_data ]);
 	});
 });
